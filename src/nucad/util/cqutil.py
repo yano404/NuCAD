@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 import cadquery as cq
 from cadquery.occ_impl.shapes import Edge, Vertex
 from cadquery.assembly import AssemblyObjects
@@ -76,14 +76,14 @@ def find_intersection_object_line(
     return intersections
 
 
-def find_intersection_assemble_line(
-    assemble: cq.Assembly,
+def find_intersection_assembly_line(
+    assembly: cq.Assembly,
     line: cq.Workplane
 ) -> List[intersection]:
     results = []
-    for x in assemble.children:
+    for x in assembly.children:
         if x.children:
-            results.extend(find_intersection_assemble_line(x, line))
+            results.extend(find_intersection_assembly_line(x, line))
         else:
             pnts = find_intersection_object_line(x.obj, line)
             for pnt in pnts:
@@ -105,15 +105,26 @@ def is_pnt_inside_solid(
     )
     return classifier.State()
 
+
 def find_obj_containing_pnt(
-    assemble: cq.Assembly,
+    assembly: cq.Assembly,
     pnt: gp_Pnt
 ) -> List[cq.Assembly]:
     results = []
-    for x in assemble.children:
+    for x in assembly.children:
         if x.children:
             results.extend(find_obj_containing_pnt(x, pnt))
         else:
             if is_pnt_inside_solid(pnt, x.obj) == IN: # type: ignore
                 results.append(x)
     return results
+
+
+def get_components(assembly: cq.Assembly) -> Dict[str, cq.Assembly]:
+        results = {}
+        for x in assembly.children:
+            if x.children:
+                results.update(get_components(x))
+            else:
+                results[x.name] = x
+        return results

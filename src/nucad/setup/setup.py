@@ -7,7 +7,7 @@ import logging
 
 from ..types import CATIMA_Layers, CATIMA_Material, Vector3
 from ..error import InvalidGeometryError
-from ..util.cqutil import intersection, get_line_endpoints, find_intersection_assemble_line, find_obj_containing_pnt
+from ..util.cqutil import get_components, intersection, get_line_endpoints, find_intersection_assembly_line, find_obj_containing_pnt
     
 
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class SetupBase(object):
 
 
     def find_intersection_line(self, line: cq.Workplane):
-        return find_intersection_assemble_line(self.setup, line)
+        return find_intersection_assembly_line(self.setup, line)
     
 
     def find_obj_containing_pnt(self, pnt: gp_Pnt):
@@ -123,6 +123,10 @@ class SetupBase(object):
                 logger.info(f'ignore {int0.object.name} because the object does not contain material in metadata.')
         
         return (names, lys)
+    
+
+    def components(self) -> Dict[str, cq.Assembly]:
+        return get_components(self.setup)
 
 
 

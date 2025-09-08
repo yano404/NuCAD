@@ -5,10 +5,12 @@ from OCP.gp import gp_Pnt
 import pycatima as catima
 import logging
 
-from ..types import CATIMA_Layers, CATIMA_Material, Vector3
+from ..types import CATIMA_Layers, CATIMA_Material, Real, Vector3
 from ..error import InvalidGeometryError
+from ..core.api import intersect
+from ..core.track import Track, TrackIntersection, intersect_assembly_track
 from ..util.cqutil import get_components, intersection, get_line_endpoints, find_intersection_assembly_line, find_obj_containing_pnt
-    
+
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +63,10 @@ class SetupBase(object):
 
     def add(self, *args, **kwargs):
         self.setup.add(*args, **kwargs)
+
+
+    def intersect_track(self, track: Track, l: Real = 10e3) ->  List[TrackIntersection]:
+        return intersect_assembly_track(self.setup, track, l)
 
 
     def find_intersection_line(self, line: cq.Workplane):

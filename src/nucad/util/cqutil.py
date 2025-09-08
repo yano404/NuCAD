@@ -1,14 +1,18 @@
 from typing import Dict, List
+import numpy as np
 import cadquery as cq
 from cadquery.occ_impl.shapes import Edge, Vertex
 from cadquery.assembly import AssemblyObjects
 from OCP.gp import gp_Pnt, gp_Dir, gp_Lin, gp_Vec
+from OCP.BRepBuilderAPI import BRepBuilderAPI_MakeEdge
 from OCP.BRepIntCurveSurface import BRepIntCurveSurface_Inter
 from OCP.BRepClass3d import BRepClass3d_SolidClassifier
-from OCP.TopoDS import TopoDS_Solid
+from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
+from OCP.TopoDS import TopoDS_Solid, TopoDS_Edge, TopoDS_Shape
 from OCP.TopAbs import TopAbs_State
 
-from ..types import Real
+from ..types import Real, Vector3
+from ..error import OCPOperationFailError
 
 
 IN = TopAbs_State.TopAbs_IN
@@ -47,6 +51,14 @@ class intersection(object):
     
     def __gt__(self, other):
         return self.dist > other.dist
+
+
+def boolean_edge_solid(edge: TopoDS_Edge, solid: TopoDS_Solid) -> TopoDS_Shape:
+    com = BRepAlgoAPI_Common(solid, edge)
+    com.Build()
+    if not com.IsDone():
+        raise OCPOperationFailError(f'Failed to calculate the common parts between {edge} and {solid} with BRepAlgoAPI_Common')
+    return com.Shape()
 
 
 def find_intersection_object_line(

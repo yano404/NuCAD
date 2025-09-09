@@ -10,6 +10,22 @@ NuCAD is a CAD tool focused on designing nuclear physics experimental instrument
 - numpy >= 2.2.6
 - pycatima >= 1.98
 
+## Installation
+
+1. Clone this repository.
+  ```sh
+  git clone https://github.com/yano404/NuCAD.git
+  ```
+2. Build NuCAD by using `uv` .
+  ```sh
+  cd /path/to/nucad
+  uv build
+  ```
+3. Install NuCAD to your enviroment.
+  ```sh
+  pip install .
+  ```
+
 ## License
 
 Copyright (c) 2025 Takayuki YANO

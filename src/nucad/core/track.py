@@ -24,7 +24,7 @@ class Track(object):
         return cq.Edge(BRepBuilderAPI_MakeEdge(self.line, 0, l).Edge())
 
 
-    def make_edge_global(self, l: Real) -> cq.Shape:
+    def make_edge(self, l: Real) -> cq.Shape:
         return self.make_edge_local(l).transformShape(self.local.rG)
 
 
@@ -56,7 +56,7 @@ def intersect_assembly_track(
         track: Track,
         l: Real) ->  List[TrackIntersection]:
     results: List[TrackIntersection] = []
-    edge = track.make_edge_global(l)
+    edge = track.make_edge(l)
     bb_edge: BoundBox = edge.BoundingBox()
     for x in assembly.children:
         if x.children:

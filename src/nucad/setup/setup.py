@@ -3,15 +3,16 @@ from typing import Dict, List, Optional, Any
 import cadquery as cq
 import logging
 
-from ..types import CATIMA_Material, Real, Vector3
+from ..types import Real, Vector3
 from ..core.track import Track, TrackIntersection, intersect_assembly_track
 from ..core.util import get_components
+from ..core.material import MaterialLike
 
 logger = logging.getLogger(__name__)
 
 
 def make_metadata(
-    material: Optional[CATIMA_Material] = None
+    material: Optional[MaterialLike] = None
 ):
     metadata = {}
     if material:

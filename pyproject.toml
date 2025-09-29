@@ -13,6 +13,9 @@ dependencies = [
     "pycatima>=1.98",
 ]
 
+[project.urls]
+source = "https://github.com/yano404/NuCAD"
+
 [build-system]
 requires = ["uv_build>=0.8.0,<0.9"]
 build-backend = "uv_build"

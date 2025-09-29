@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class Material(catima.Material): # type: ignore
-    def __init__(self, *args, name: str, **kwargs):
+    def __init__(self, *args, name: str, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.name: str = name
         self.components = []
@@ -61,20 +61,20 @@ class MaterialLayers(catima.Layers): # type: ignore
     @overload
     def __init__(
         self,
-        arg: Optional[List[TrackIntersection]] = None):
+        arg: Optional[List[TrackIntersection]] = None) -> None:
         ...
 
 
     @overload
     def __init__(
         self,
-        arg: Optional[List[Material]] = None):
+        arg: Optional[List[Material]] = None) -> None:
         ...
 
 
     def __init__(
             self,
-            arg = None):
+            arg = None) -> None:
         super().__init__()
         self.names: List[str] = []
         if arg:
@@ -86,7 +86,7 @@ class MaterialLayers(catima.Layers): # type: ignore
                 raise RuntimeError('arg should be list of TrackIntersection or Material')
 
 
-    def add(self, material: MaterialLike, name: Optional[str] = None):
+    def add(self, material: MaterialLike, name: Optional[str] = None) -> None:
         if type(material) is Material:
             super().add(material)
             if name:
@@ -101,7 +101,7 @@ class MaterialLayers(catima.Layers): # type: ignore
                 raise RuntimeError('name is required.')
 
 
-    def add_intersections(self, intersections: List[TrackIntersection]):
+    def add_intersections(self, intersections: List[TrackIntersection]) -> None:
         for x in intersections:
             name = x.object.name
             if 'material' in x.object.metadata:
@@ -113,7 +113,7 @@ class MaterialLayers(catima.Layers): # type: ignore
                 logger.info(f'ignore {x.object.name} because the object does not contain material in metadata.')
 
 
-    def add_materials(self, materials: List[Material]):
+    def add_materials(self, materials: List[Material]) -> None:
         for x in materials:
             self.add(x)
 
@@ -131,16 +131,16 @@ class MaterialLayers(catima.Layers): # type: ignore
 
 
     @overload
-    def get(self, key: str):
+    def get(self, key: str) ->  Material:
         ...
 
 
     @overload
-    def get(self, key: int):
+    def get(self, key: int) -> Material:
         ...
 
 
-    def get(self, key):
+    def get(self, key) -> Material:
         if isinstance(key, int):
             idx = key
         elif isinstance(key, str):
@@ -153,11 +153,24 @@ class MaterialLayers(catima.Layers): # type: ignore
         return Material(super().get(idx), name=self.names[idx])
 
 
-    def to_list(self):
+    def to_list(self) -> List[Material]:
         mat_list = []
         for i in range(self.size()):
             mat_list.append(self.get(i))
         return mat_list
+
+
+    def __reduce__(self):
+        return (
+            MaterialLayers._reconstruct,
+            tuple([self.to_list()]),
+            None
+        )
+
+
+    @staticmethod
+    def _reconstruct(materials: List[Material]):
+        return MaterialLayers(materials)
 
 
 # Define types for layers of Materials

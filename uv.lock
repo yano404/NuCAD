@@ -222,11 +222,10 @@ wheels = [
 
 [[package]]
 name = "nucad"
-version = "0.1.0"
+version = "0.1.0a1"
 source = { editable = "." }
 dependencies = [
     { name = "cadquery" },
-    { name = "cadquery-ocp" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pycatima" },
@@ -235,8 +234,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "cadquery", specifier = ">=2.5.2" },
-    { name = "cadquery-ocp", specifier = ">=7.7.2" },
-    { name = "numpy", specifier = ">=2.2.6" },
+    { name = "numpy", specifier = ">=2.0.0" },
     { name = "pycatima", specifier = ">=1.98" },
 ]
 

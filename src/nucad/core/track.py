@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Union, Tuple
 import cadquery as cq
 from OCP.BRepBuilderAPI import BRepBuilderAPI_MakeEdge
 
 from .geometry import Pnt, Dir, Lin
-from .api import intersect
+from .api import check_overlap, intersect
 from ..types import Real, Vector3
+from .util import get_components
 from cadquery.occ_impl.geom import BoundBox
 
 
@@ -56,30 +57,23 @@ def intersect_assembly_track(
         track: Track,
         l: Real) ->  List[TrackIntersection]:
     results: List[TrackIntersection] = []
+
     edge = track.make_edge(l)
     bb_edge: BoundBox = edge.BoundingBox()
-    for x in assembly.children:
-        if x.children:
-            results.extend(
-                intersect_assembly_track(x, track, l)
+
+    for x in get_components(assembly).values():
+        obj = x.obj.toOCC() # type: ignore
+        if check_overlap(bb_edge, obj):
+            intersection_shape = intersect(
+                obj,
+                edge.wrapped
             )
-        else:
-            obj = x.obj.toOCC() # type: ignore
-            bb_obj: BoundBox = cq.Shape(obj).BoundingBox()
-            overlap_x = not (bb_edge.xmax < bb_obj.xmin or bb_edge.xmin > bb_obj.xmax)
-            overlap_y = not (bb_edge.ymax < bb_obj.ymin or bb_edge.ymin > bb_obj.ymax)
-            overlap_z = not (bb_edge.zmax < bb_obj.zmin or bb_edge.zmin > bb_obj.zmax)
-            overlap = overlap_x and overlap_y and overlap_z
-            if overlap:
-                intersection_shape = intersect(
-                    obj,
-                    edge.wrapped
-                )
-                for e in intersection_shape.Edges():
-                    results.append(TrackIntersection(
-                        e,
-                        track,
-                        x
-                    ))
+            for e in intersection_shape.Edges():
+                results.append(TrackIntersection(
+                    e,
+                    track,
+                    x
+                ))
+
     results.sort()
     return results

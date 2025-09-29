@@ -1,7 +1,7 @@
 [project]
 name = "nucad"
-version = "0.1.0"
-description = "Nuclear physics CAD-based simulation toolkit"
+version = "0.1.0a1"
+description = "CAD tool focused on designing nuclear physics experimental instruments"
 readme = "README.md"
 authors = [
     { name = "Takayuki Yano", email = "yano.takayuki.55w@st.kyoto-u.ac.jp" }
@@ -9,14 +9,19 @@ authors = [
 requires-python = ">=3.10"
 dependencies = [
     "cadquery>=2.5.2",
-    "cadquery-ocp>=7.7.2",
-    "numpy>=2.2.6",
+    "numpy>=2.0.0",
     "pycatima>=1.98",
 ]
 
-[project.scripts]
-nucad = "nucad:main"
+[project.urls]
+source = "https://github.com/yano404/NuCAD"
 
 [build-system]
 requires = ["uv_build>=0.8.0,<0.9"]
 build-backend = "uv_build"
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true

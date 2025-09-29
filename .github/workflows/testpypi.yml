@@ -1,0 +1,45 @@
+name: Publish (TestPyPI, prerelease w/ auto .devN)
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.12
+
+      - name: Derive prerelease dev version
+        id: ver
+        run: |
+          python - <<'PY'
+          import re, sys, json
+          from pathlib import Path
+          import tomllib
+          p = tomllib.loads(Path("pyproject.toml").read_text())
+          base = p["project"]["version"]
+          import os
+          n = os.environ["GITHUB_RUN_NUMBER"]
+          base = re.sub(r"\.dev\d+$", "", base)
+          v = f"{base}.dev{n}"
+          print(v)
+          Path("VERSION.txt").write_text(v)
+          PY
+
+      - name: Set version in pyproject.toml
+        run: |
+          v="$(cat VERSION.txt)"
+          uv version "$v"
+
+      - run: uv build
+
+      - name: Publish to TestPyPI
+        run: uv publish --index testpypi

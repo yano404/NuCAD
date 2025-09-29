@@ -11,5 +11,5 @@ from .geometry import (
     pol,
     xyz
 )
-from .material import Materials
+from .material import Material, MaterialLayers
 from .track import Track

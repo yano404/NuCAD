@@ -2,15 +2,47 @@
 
 NuCAD is a CAD tool focused on designing nuclear physics experimental instruments.
 
-## Requirements
 
-- python >= 3.10
-- cadquery >= 2.5.2
-- cadquery-ocp >= 7.7.2
-- numpy >= 2.2.6
-- pycatima >= 1.98
+## Getting Started
 
-## Installation
+### NuCAD Installation via PIP
+
+```
+pip install nucad
+```
+
+NuCAD depends on [CadQuery](https://github.com/CadQuery/cadquery) and [OCP](https://github.com/CadQuery/OCP).
+If you have any troubles, consider to install cadquery using `mamba`.
+
+```
+mamba create -n nucad -c conda-forge \
+  python=3.12 numpy cadquery ocp
+mamba activate nucad
+pip install pycatima nucad
+```
+
+### Using NuCAD in Apptainer
+
+1. Clone the apptainer definition file.
+  ```
+  git clone git@github.com:yano404/nucad_apptainer.git
+  ```
+
+2. Build SIF container.
+  ```
+  cd nucad_apptainer
+  apptainer build nucad.sif nucad.def
+  ```
+
+3. Run the container.
+  ```
+  apptainer run nucad.sif
+  ```
+
+4. Visit http://localhost:54321 in your web browser.
+   You will see Jupyter Lab running on the port.
+
+### Building NuCAD from Source
 
 1. Clone this repository.
   ```sh
@@ -25,6 +57,7 @@ NuCAD is a CAD tool focused on designing nuclear physics experimental instrument
   ```sh
   pip install .
   ```
+
 
 ## License
 

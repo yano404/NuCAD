@@ -1,5 +1,9 @@
 # NuCAD
 
+![PyPI - Version](https://img.shields.io/pypi/v/nucad)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/nucad)
+[![Publish to PyPI](https://github.com/yano404/NuCAD/actions/workflows/pypi.yml/badge.svg)](https://github.com/yano404/NuCAD/actions/workflows/pypi.yml)
+
 NuCAD is a CAD tool focused on designing nuclear physics experimental instruments.
 
 

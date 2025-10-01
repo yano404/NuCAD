@@ -29,7 +29,7 @@ pip install pycatima nucad
 
 1. Clone the apptainer definition file.
   ```
-  git clone git@github.com:yano404/nucad_apptainer.git
+  git clone https://github.com/yano404/nucad_apptainer.git
   ```
 
 2. Build SIF container.

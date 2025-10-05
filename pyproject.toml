@@ -1,6 +1,6 @@
 [project]
 name = "nucad"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "CAD tool focused on designing nuclear physics experimental instruments"
 readme = "README.md"
 authors = [

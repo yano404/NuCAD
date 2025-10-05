@@ -28,6 +28,7 @@ class SetupBase(object):
         normal: Vector3 = (0.0, 0.0, 1.0),
         xDir: Vector3 = (1.0, 0.0, 0.0),
         metadata: Optional[Dict[str, Any]] = None,
+        **kwargs
     ) -> None:
         self.setup = cq.Assembly(
             name = name,
@@ -35,7 +36,8 @@ class SetupBase(object):
         self.construct(
             origin = origin,
             normal = normal,
-            xDir = xDir
+            xDir = xDir,
+            **kwargs
         )
 
     @abstractmethod
@@ -43,7 +45,8 @@ class SetupBase(object):
         self,
         origin: Vector3 = (0.0, 0.0, 0.0),
         normal: Vector3 = (0.0, 0.0, 1.0),
-        xDir: Vector3 = (1.0, 0.0, 0.0)
+        xDir: Vector3 = (1.0, 0.0, 0.0),
+        **kwargs
     ):
         '''
         example

@@ -5,7 +5,7 @@ from OCP.BRepBuilderAPI import BRepBuilderAPI_MakeEdge
 from .geometry import Pnt, Dir, Lin
 from .api import check_overlap, intersect
 from ..types import Real, Vector3
-from .util import get_components
+from .util import get_components, get_object
 from cadquery.occ_impl.geom import BoundBox
 
 
@@ -62,7 +62,7 @@ def intersect_assembly_track(
     bb_edge: BoundBox = edge.BoundingBox()
 
     for x in get_components(assembly).values():
-        obj = x.obj.toOCC() # type: ignore
+        obj = get_object(x, coord='world').wrapped
         if check_overlap(bb_edge, obj):
             intersection_shape = intersect(
                 obj,

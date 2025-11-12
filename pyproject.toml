@@ -1,12 +1,12 @@
 [project]
 name = "nucad"
-version = "0.1.0a3"
+version = "0.1.0a4"
 description = "CAD tool focused on designing nuclear physics experimental instruments"
 readme = "README.md"
 authors = [
     { name = "Takayuki Yano", email = "yano.takayuki.55w@st.kyoto-u.ac.jp" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "cadquery>=2.5.2",
     "numpy>=2.0.0",

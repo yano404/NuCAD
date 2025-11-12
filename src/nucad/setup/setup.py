@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Self
 import cadquery as cq
 import logging
 
@@ -23,10 +23,8 @@ def make_metadata(
 class SetupBase(object):
     def __init__(
         self,
+        *args,
         name: Optional[str] = None,
-        origin: Vector3 = (0.0, 0.0, 0.0),
-        normal: Vector3 = (0.0, 0.0, 1.0),
-        xDir: Vector3 = (1.0, 0.0, 0.0),
         metadata: Optional[Dict[str, Any]] = None,
         **kwargs
     ) -> None:
@@ -34,18 +32,14 @@ class SetupBase(object):
             name = name,
             metadata = metadata)
         self.construct(
-            origin = origin,
-            normal = normal,
-            xDir = xDir,
+            *args,
             **kwargs
         )
 
     @abstractmethod
     def construct(
         self,
-        origin: Vector3 = (0.0, 0.0, 0.0),
-        normal: Vector3 = (0.0, 0.0, 1.0),
-        xDir: Vector3 = (1.0, 0.0, 0.0),
+        *args,
         **kwargs
     ):
         '''
@@ -60,9 +54,11 @@ class SetupBase(object):
         pass
 
 
-    def add(self, *args, **kwargs):
-        self.setup.add(*args, **kwargs)
-
+    def add(self, obj: cq.Assembly | cq.Workplane | Self, *args, **kwargs):
+        if isinstance(obj, SetupBase):
+            self.setup.add(obj.setup, *args, **kwargs)
+        else:
+            self.setup.add(obj, *args, **kwargs)
 
     def intersect_track(self, track: Track, l: Real = 10e3) ->  List[TrackIntersection]:
         return intersect_assembly_track(self.setup, track, l)

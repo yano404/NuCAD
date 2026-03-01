@@ -1,4 +1,4 @@
-from typing import List, Union, Tuple
+from typing import List, Literal, Union, Optional
 import cadquery as cq
 from OCP.BRepBuilderAPI import BRepBuilderAPI_MakeEdge
 
@@ -34,15 +34,27 @@ class TrackIntersection(object):
             self,
             edge: cq.Shape,
             track: Track,
-            object: cq.Assembly
+            object: Optional[cq.Assembly] = None,
+            name: Optional[str] = None
         ) -> None:
         self.edge: cq.Shape = edge
         self.track: Track = track
-        self.object: cq.Assembly = object
+        self.object: Union[cq.Assembly, None] = object
+        self._name = name
         self.dist: Real = self.edge.Center().toPnt().Distance(
             self.track.origin
         )
-        
+    
+    @property
+    def name(self):
+        if self.object:
+            return self.object.name
+        else:
+            return self._name
+    
+    @name.setter
+    def name(self, v: str):
+        self._name = v
     
     def __lt__(self, other):
         return self.dist < other.dist
@@ -76,4 +88,25 @@ def intersect_assembly_track(
                 ))
 
     results.sort()
+
+    gaps = []
+    p0 = cq.Vector(track.origin)
+    p1 = cq.Vector(track.origin)
+    prev_name = 'origin'
+    for r in results:
+        p1 = r.edge.startPoint() # type: ignore
+        if p0 != p1:
+            gaps.append(
+                TrackIntersection(
+                    cq.Edge.makeLine(p0,p1),
+                    track,
+                    object = None,
+                    name = f'gap_{prev_name}_{r.name}'
+                )
+            )
+        p0 =  r.edge.endPoint() # type: ignore
+        prev_name = r.name
+    results.extend(gaps)
+    results.sort()
+
     return results

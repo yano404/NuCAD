@@ -103,6 +103,8 @@ class MaterialLayers(catima.Layers): # type: ignore
 
     def add_intersections(self, intersections: List[TrackIntersection]) -> None:
         for x in intersections:
+            if x.object is None:
+                continue
             name = x.object.name
             if 'material' in x.object.metadata:
                 mat = x.object.metadata['material']

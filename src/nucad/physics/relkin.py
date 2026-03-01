@@ -1,30 +1,32 @@
 import numpy as np
 
 class kinema():
-    def __init__(self, m1, m2, m3, m4, num=1000):
+    def __init__(self, m1, m2, m3, m4):
         self.m1 = m1
         self.m2 = m2
         self.m3 = m3
         self.m4 = m4
-        self.theta_cm = np.linspace(1e-5, np.pi-1e-5, num)
-        self.p_cm = 0.0
-        self.T3_cm = 0.0
-        self.T4_cm = 0.0
-        self.theta3_lab = np.zeros(num)
-        self.theta4_lab = np.zeros(num)
-        self.T3_lab = np.zeros(num)
-        self.T4_lab = np.zeros(num)
-        self.p3_lab = np.zeros(num)
-        self.p4_lab = np.zeros(num)
-        self.beta3_lab = np.zeros(num)
-        self.beta4_lab = np.zeros(num)
+        self.theta_cm = None
+        self.p_cm = None
+        self.T3_cm = None
+        self.T4_cm = None
+        self.theta3_lab = None
+        self.theta4_lab = None
+        self.T3_lab = None
+        self.T4_lab = None
+        self.p3_lab = None
+        self.p4_lab = None
+        self.beta3_lab = None
+        self.beta4_lab = None
 
-    def calc(self, T):
+    def calc(self, T, num=1000, theta_cm=None, theta3_lab=None, theta4_lab=None):
         m1 = self.m1
         m2 = self.m2
         m3 = self.m3
         m4 = self.m4
-        theta_cm = self.theta_cm
+
+        # Initialize
+        self.__init__(m1, m2, m3, m4)
         
         sq = lambda x : np.power(x,2)
 
@@ -46,6 +48,38 @@ class kinema():
         # Momentum in the CM
         self.p_cm = np.sqrt( (sq(s - sq(m3) - sq(m4)) - 4*sq(m3)*sq(m4)) / (4*s) )
         p_cm = self.p_cm
+
+        # Calculate theta in the CM
+        if theta_cm is not None:
+            self.theta_cm = theta_cm
+        elif theta3_lab is not None:
+            tan3 = np.tan(theta3_lab)
+            gtan3 = gamma * tan3
+            alpha = np.arctan(1 / gtan3)
+            cos_theta_alpha = (- beta_gamma * E3_cm * tan3) / (p_cm * np.sqrt(sq(gtan3)+1))
+            mask = np.abs(cos_theta_alpha)<=1
+            theta_cm_alpha = np.arccos(cos_theta_alpha[mask])
+            alpha = alpha[mask]
+            self.theta_cm = np.sort(
+                np.concatenate((theta_cm_alpha - alpha, 2*np.pi - theta_cm_alpha - alpha))
+            )
+        elif theta4_lab is not None:
+            tan4 = np.tan(theta4_lab)
+            gtan4 = gamma * tan4
+            alpha = np.arctan(1 / gtan4)
+            cos_theta_alpha = (beta_gamma * E4_cm * tan4) / (p_cm * np.sqrt(sq(gtan4)+1))
+            mask = np.abs(cos_theta_alpha)<=1
+            theta_cm_alpha = np.arccos(cos_theta_alpha[mask])
+            alpha = alpha[mask]
+            self.theta_cm =  np.sort(
+                np.concatenate((theta_cm_alpha + alpha, - theta_cm_alpha + alpha))
+            )
+        else:
+            self.theta_cm = np.linspace(1e-5, np.pi-1e-5, num)
+        self.theta_cm = self.theta_cm[
+            np.logical_not(np.isclose(self.theta_cm, 0.0))
+        ]
+        theta_cm = self.theta_cm
         
         # Energy of particles 3 & 4 in Lab
         E3_lab = gamma * E3_cm + beta_gamma * p_cm * np.cos(theta_cm)

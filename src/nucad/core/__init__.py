@@ -13,3 +13,5 @@ from .geometry import (
 )
 from .material import Material, MaterialLayers
 from .track import Track
+from .trace import trace, Trace, TraceContainer
+from .particle import Particle

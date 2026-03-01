@@ -76,6 +76,9 @@ class kinema():
             )
         else:
             self.theta_cm = np.linspace(1e-5, np.pi-1e-5, num)
+        self.theta_cm = self.theta_cm[
+            np.logical_not(np.isclose(self.theta_cm, 0.0))
+        ]
         theta_cm = self.theta_cm
         
         # Energy of particles 3 & 4 in Lab
